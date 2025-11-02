@@ -1,44 +1,18 @@
-package br.com.fiap.sprint.domain;
+package br.com.fiap.sprint.dto.medico;
 
-import java.time.LocalDate;
-
-public class Medico {
-    private long id;
+public class MedicoResponse {
+    private Long id;
     private String nome;
     private String crm;
     private String especialidade;
     private String telefone;
     private String email;
 
-    public Medico() {
-    }
-
-    public Medico(String nome, String crm, String especialidade, String telefone, String email) {
-        this.id = id;
-        this.nome = nome;
-        this.crm = crm;
-        this.especialidade = especialidade;
-        this.telefone = telefone;
-        this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "Medico{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", crm='" + crm + '\'' +
-                ", especialidade='" + especialidade + '\'' +
-                ", telefone='" + telefone + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,27 +1,18 @@
-package br.com.fiap.sprint.domain;
+package br.com.fiap.sprint.dto.consulta;
 
-import br.com.fiap.sprint.util.Formatters;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-public class Consulta {
+public class ConsultaResponse {
+
     private Long id;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataConsulta;
+
     private String status;
     private Long idPaciente;
     private Long idMedico;
-
-    public Consulta() {
-    }
-
-    public Consulta(Long id, LocalDate dataConsulta, String status, Long idPaciente, Long idMedico) {
-        this.id = id;
-        this.dataConsulta = dataConsulta;
-        this.status = status;
-        this.idPaciente = idPaciente;
-        this.idMedico = idMedico;
-    }
 
     public Long getId() {
         return id;
@@ -61,13 +52,5 @@ public class Consulta {
 
     public void setIdMedico(Long idMedico) {
         this.idMedico = idMedico;
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Consulta[id=%d, data=%s, status='%s', paciente=%d, medico=%d]",
-                id, dataConsulta, status, idPaciente, idMedico
-        );
     }
 }

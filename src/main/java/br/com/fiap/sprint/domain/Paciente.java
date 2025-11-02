@@ -1,20 +1,31 @@
 package br.com.fiap.sprint.domain;
 
 import br.com.fiap.sprint.util.Formatters;
+
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 public class Paciente {
 
+
     private Long id;
     private String nome;
     private String cpf;
-    private LocalDate dataNascimento;
-    private String telefone;
     private String email;
+    private String telefone;
+
+    private LocalDate dataNascimento;
 
     public Paciente() {}
 
-    // Getters & Setters
+    public Paciente(String nome, String cpf, String email, String telefone) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.email = email;
+        this.telefone = telefone;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
