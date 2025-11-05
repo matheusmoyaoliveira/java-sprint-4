@@ -98,6 +98,7 @@ public class PacienteRepositoryImpl implements PacienteRepository {
             stmt.setString(9, p.getDescricao());
 
             stmt.executeUpdate();
+            conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -132,6 +133,7 @@ public class PacienteRepositoryImpl implements PacienteRepository {
             stmt.setLong(10, p.getId());
 
             stmt.executeUpdate();
+            conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }

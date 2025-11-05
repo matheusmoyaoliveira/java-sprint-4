@@ -26,6 +26,7 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
             ps.setTimestamp(1, Timestamp.valueOf(c.getDataHora()));
             ps.setString(2, c.getModalidade());
             ps.executeUpdate();
+            conn.commit();
 
         } catch (SQLException e) {
             System.out.println("Erro ao salvar consulta: " + e.getMessage());
@@ -95,6 +96,7 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
             ps.setString(2, c.getModalidade());
             ps.setLong(3, c.getId());
             ps.executeUpdate();
+            conn.commit();
 
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar consulta: " + e.getMessage());
@@ -111,6 +113,7 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
 
             ps.setLong(1, id);
             ps.executeUpdate();
+            conn.commit();
 
         } catch (SQLException e) {
             System.out.println("Erro ao remover consulta: " + e.getMessage());

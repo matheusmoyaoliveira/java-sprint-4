@@ -26,6 +26,7 @@ public class MedicoRepositoryImpl implements MedicoRepository {
             stmt.setString(1, m.getNome());
             stmt.setString(2, m.getCrm());
             stmt.executeUpdate();
+            conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -107,6 +108,7 @@ public class MedicoRepositoryImpl implements MedicoRepository {
             stmt.setString(2, m.getCrm());
             stmt.setLong(3, m.getId());
             stmt.executeUpdate();
+            conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,6 +123,7 @@ public class MedicoRepositoryImpl implements MedicoRepository {
 
             stmt.setLong(1, id);
             stmt.executeUpdate();
+            conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
