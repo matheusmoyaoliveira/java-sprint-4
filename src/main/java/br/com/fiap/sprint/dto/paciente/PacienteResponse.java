@@ -7,71 +7,64 @@ public class PacienteResponse {
 
     private Long id;
     private String nome;
-    private String email;
     private String cpf;
-    private String telefone;
+    private String rg;
+    private Double altura;
+    private Double peso;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dataNascimento;
 
-    public PacienteResponse() {
+    private String escolaridade;
+    private String estadoCivil;
+    private String descricao;
 
-    }
 
-    public PacienteResponse(Long id, String nome, String email, String cpf, String telefone, LocalDate dataNascimento) {
+    public PacienteResponse() {}
+
+    public PacienteResponse(Long id, String nome, String cpf, String rg, Double altura,
+                            Double peso, LocalDate dataNascimento, String escolaridade,
+                            String estadoCivil, String descricao) {
         this.id = id;
         this.nome = nome;
-        this.email = email;
         this.cpf = cpf;
-        this.telefone = telefone;
+        this.rg = rg;
+        this.altura = altura;
+        this.peso = peso;
         this.dataNascimento = dataNascimento;
+        this.escolaridade = escolaridade;
+        this.estadoCivil = estadoCivil;
+        this.descricao = descricao;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getRg() { return rg; }
+    public void setRg(String rg) { this.rg = rg; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public Double getAltura() { return altura; }
+    public void setAltura(Double altura) { this.altura = altura; }
 
-    public String getCpf() {
-        return cpf;
-    }
+    public Double getPeso() { return peso; }
+    public void setPeso(Double peso) { this.peso = peso; }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+    public LocalDate getDataNascimento() { return dataNascimento; }
+    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
 
-    public String getTelefone() {
-        return telefone;
-    }
+    public String getEscolaridade() { return escolaridade; }
+    public void setEscolaridade(String escolaridade) { this.escolaridade = escolaridade; }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
+    public String getEstadoCivil() { return estadoCivil; }
+    public void setEstadoCivil(String estadoCivil) { this.estadoCivil = estadoCivil; }
 
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 }

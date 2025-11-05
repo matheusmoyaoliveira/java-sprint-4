@@ -1,56 +1,31 @@
 package br.com.fiap.sprint.dto.consulta;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ConsultaResponse {
 
     private Long id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dataConsulta;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime dataHora;
 
-    private String status;
-    private Long idPaciente;
-    private Long idMedico;
+    private String modalidade;
 
-    public Long getId() {
-        return id;
-    }
+    public ConsultaResponse() {}
 
-    public void setId(Long id) {
+    public ConsultaResponse(Long id, LocalDateTime dataHora, String modalidade) {
         this.id = id;
+        this.dataHora = dataHora;
+        this.modalidade = modalidade;
     }
 
-    public LocalDate getDataConsulta() {
-        return dataConsulta;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setDataConsulta(LocalDate dataConsulta) {
-        this.dataConsulta = dataConsulta;
-    }
+    public LocalDateTime getDataHora() { return dataHora; }
+    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Long getIdPaciente() {
-        return idPaciente;
-    }
-
-    public void setIdPaciente(Long idPaciente) {
-        this.idPaciente = idPaciente;
-    }
-
-    public Long getIdMedico() {
-        return idMedico;
-    }
-
-    public void setIdMedico(Long idMedico) {
-        this.idMedico = idMedico;
-    }
+    public String getModalidade() { return modalidade; }
+    public void setModalidade(String modalidade) { this.modalidade = modalidade; }
 }

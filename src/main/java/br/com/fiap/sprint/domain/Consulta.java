@@ -1,24 +1,22 @@
 package br.com.fiap.sprint.domain;
 
-import br.com.fiap.sprint.util.Formatters;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Consulta {
+
     private Long id;
-    private LocalDate dataConsulta;
-    private String status;
+    private LocalDateTime dataHora;
+    private String modalidade;
     private Long idPaciente;
     private Long idMedico;
 
     public Consulta() {
     }
 
-    public Consulta(Long id, LocalDate dataConsulta, String status, Long idPaciente, Long idMedico) {
+    public Consulta(Long id, LocalDateTime dataHora, String modalidade, Long idPaciente, Long idMedico) {
         this.id = id;
-        this.dataConsulta = dataConsulta;
-        this.status = status;
+        this.dataHora = dataHora;
+        this.modalidade = modalidade;
         this.idPaciente = idPaciente;
         this.idMedico = idMedico;
     }
@@ -31,20 +29,20 @@ public class Consulta {
         this.id = id;
     }
 
-    public LocalDate getDataConsulta() {
-        return dataConsulta;
+    public LocalDateTime getDataHora() {
+        return dataHora;
     }
 
-    public void setDataConsulta(LocalDate dataConsulta) {
-        this.dataConsulta = dataConsulta;
+    public void setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
     }
 
-    public String getStatus() {
-        return status;
+    public String getModalidade() {
+        return modalidade;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setModalidade(String modalidade) {
+        this.modalidade = modalidade;
     }
 
     public Long getIdPaciente() {
@@ -61,13 +59,5 @@ public class Consulta {
 
     public void setIdMedico(Long idMedico) {
         this.idMedico = idMedico;
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Consulta[id=%d, data=%s, status='%s', paciente=%d, medico=%d]",
-                id, dataConsulta, status, idPaciente, idMedico
-        );
     }
 }

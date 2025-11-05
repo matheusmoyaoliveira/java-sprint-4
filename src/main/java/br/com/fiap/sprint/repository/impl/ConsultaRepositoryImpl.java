@@ -3,8 +3,8 @@ package br.com.fiap.sprint.repository.impl;
 import br.com.fiap.sprint.domain.Consulta;
 import br.com.fiap.sprint.repository.ConsultaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,33 +16,28 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
     private static final String PASSWORD = "130997";
 
     @Override
-    public Consulta salvar(Consulta consulta) {
-        String sql = "INSERT INTO CONSULTA (DATA_CONSULTA, STATUS, ID_PACIENTE, ID_MEDICO) VALUES (?, ?, ?, ?)";
+    public Consulta salvar(Consulta c) {
+        String sql = "INSERT INTO T_HC_CONSULTA (ID_CONSULTA, DT_HR_CONSULTA, DS_MODALIDADE) " +
+                "VALUES (SQ_T_HC_CONSULTA.NEXTVAL, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            conn.setAutoCommit(true); // ✅ ativa o commit automático
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            PreparedStatement ps = conn.prepareStatement(sql, new String[] {"ID_CONSULTA"});
-            ps.setDate(1, java.sql.Date.valueOf(consulta.getDataConsulta()));
-            ps.setString(2, consulta.getStatus());
-            ps.setLong(3, consulta.getIdPaciente());
-            ps.setLong(4, consulta.getIdMedico());
+            ps.setTimestamp(1, Timestamp.valueOf(c.getDataHora()));
+            ps.setString(2, c.getModalidade());
             ps.executeUpdate();
-
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) consulta.setId(rs.getLong(1));
 
         } catch (SQLException e) {
             System.out.println("Erro ao salvar consulta: " + e.getMessage());
         }
 
-        return consulta;
+        return c;
     }
 
     @Override
     public List<Consulta> listarTodos() {
         List<Consulta> consultas = new ArrayList<>();
-        String sql = "SELECT * FROM CONSULTA";
+        String sql = "SELECT ID_CONSULTA, DT_HR_CONSULTA, DS_MODALIDADE FROM T_HC_CONSULTA ORDER BY ID_CONSULTA";
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -51,10 +46,9 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
             while (rs.next()) {
                 Consulta c = new Consulta();
                 c.setId(rs.getLong("ID_CONSULTA"));
-                c.setDataConsulta(rs.getDate("DATA_CONSULTA").toLocalDate());
-                c.setStatus(rs.getString("STATUS"));
-                c.setIdPaciente(rs.getLong("ID_PACIENTE"));
-                c.setIdMedico(rs.getLong("ID_MEDICO"));
+                Timestamp dataHora = rs.getTimestamp("DT_HR_CONSULTA");
+                c.setDataHora(dataHora != null ? dataHora.toLocalDateTime() : null);
+                c.setModalidade(rs.getString("DS_MODALIDADE").trim());
                 consultas.add(c);
             }
 
@@ -67,55 +61,59 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
 
     @Override
     public Consulta buscarPorId(Long id) {
-        String sql = "SELECT * FROM CONSULTA WHERE ID_CONSULTA = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String sql = "SELECT ID_CONSULTA, DT_HR_CONSULTA, DS_MODALIDADE FROM T_HC_CONSULTA WHERE ID_CONSULTA = ?";
 
-            stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Consulta c = new Consulta();
                 c.setId(rs.getLong("ID_CONSULTA"));
-                c.setDataConsulta(rs.getDate("DATA_CONSULTA").toLocalDate());
-                c.setStatus(rs.getString("STATUS"));
-                c.setIdPaciente(rs.getLong("ID_PACIENTE"));
-                c.setIdMedico(rs.getLong("ID_MEDICO"));
+                Timestamp dataHora = rs.getTimestamp("DT_HR_CONSULTA");
+                c.setDataHora(dataHora != null ? dataHora.toLocalDateTime() : null);
+                c.setModalidade(rs.getString("DS_MODALIDADE").trim());
                 return c;
             }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao buscar consulta: " + e.getMessage());
         }
+
         return null;
     }
 
     @Override
     public Consulta atualizar(Consulta c) {
-        String sql = "UPDATE CONSULTA SET DATA_CONSULTA = ?, STATUS = ?, ID_PACIENTE = ?, ID_MEDICO = ? WHERE ID_CONSULTA = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String sql = "UPDATE T_HC_CONSULTA SET DT_HR_CONSULTA = ?, DS_MODALIDADE = ? WHERE ID_CONSULTA = ?";
 
-            stmt.setDate(1, java.sql.Date.valueOf(c.getDataConsulta()));
-            stmt.setString(2, c.getStatus());
-            stmt.setLong(3, c.getIdPaciente());
-            stmt.setLong(4, c.getIdMedico());
-            stmt.setLong(5, c.getId());
-            stmt.executeUpdate();
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setTimestamp(1, Timestamp.valueOf(c.getDataHora()));
+            ps.setString(2, c.getModalidade());
+            ps.setLong(3, c.getId());
+            ps.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao atualizar consulta: " + e.getMessage());
         }
+
         return c;
     }
 
     @Override
     public void remover(Long id) {
-        String sql = "DELETE FROM CONSULTA WHERE ID_CONSULTA = ?";
+        String sql = "DELETE FROM T_HC_CONSULTA WHERE ID_CONSULTA = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            stmt.executeUpdate();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, id);
+            ps.executeUpdate();
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao remover consulta: " + e.getMessage());
         }
     }
 }

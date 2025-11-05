@@ -1,47 +1,61 @@
 package br.com.fiap.sprint.service.paciente;
 
 import br.com.fiap.sprint.domain.Paciente;
-import br.com.fiap.sprint.exception.BusinessException;
-
+import br.com.fiap.sprint.dto.paciente.PacienteRequest;
+import br.com.fiap.sprint.dto.paciente.PacienteResponse;
+import br.com.fiap.sprint.mapper.PacienteMapper;
+import br.com.fiap.sprint.repository.PacienteRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.NotFoundException;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PacienteService {
 
     @Inject
-    br.com.fiap.sprint.repository.PacienteRepository repository;
+    PacienteRepository repository;
 
-    public List<Paciente> listarTodos() {
-        return repository.listarTodos();
+    public List<PacienteResponse> listarTodos() {
+        return repository.listarTodos()
+                .stream()
+                .map(PacienteMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
-    public Paciente buscarPorId(Long id) {
+    public PacienteResponse buscarPorId(Long id) {
         Paciente paciente = repository.buscarPorId(id);
-        if (paciente == null) {
-            throw new NotFoundException("Paciente com id " + id + " não encontrado.");
-        }
-        return paciente;
+        return paciente != null ? PacienteMapper.toResponse(paciente) : null;
     }
 
-    public Paciente criar(Paciente novo) {
-        boolean existe = repository.buscarPorCpf(novo.getCpf()) != null;
-        if (existe) {
-            throw new BusinessException("CPF já cadastrado: " + novo.getCpf());
-        }
-        return repository.salvar(novo);
+    public PacienteResponse buscarPorCpf(String cpf) {
+        Paciente paciente = repository.buscarPorCpf(cpf);
+        return paciente != null ? PacienteMapper.toResponse(paciente) : null;
     }
 
-    public Paciente atualizar(Long id, Paciente atualizado) {
-        Paciente existente = buscarPorId(id);
-        atualizado.setId(existente.getId());
-        return repository.atualizar(atualizado);
+    public PacienteResponse salvar(PacienteRequest request) {
+        Paciente paciente = PacienteMapper.toDomain(request);
+        Paciente salvo = repository.salvar(paciente);
+        return PacienteMapper.toResponse(salvo);
     }
 
-    public void remover(Long id) {
-        Paciente existente = buscarPorId(id);
-        repository.remover(existente.getId());
+    public PacienteResponse atualizar(Long id, PacienteRequest request) {
+        Paciente existente = repository.buscarPorId(id);
+        if (existente == null) return null;
+
+        Paciente atualizado = PacienteMapper.toDomain(request);
+        atualizado.setId(id);
+
+        Paciente salvo = repository.atualizar(atualizado);
+        return PacienteMapper.toResponse(salvo);
+    }
+
+    public boolean remover(Long id) {
+        Paciente existente = repository.buscarPorId(id);
+        if (existente == null) return false;
+
+        repository.remover(id);
+        return true;
     }
 }

@@ -3,33 +3,29 @@ package br.com.fiap.sprint.mapper;
 import br.com.fiap.sprint.domain.Consulta;
 import br.com.fiap.sprint.dto.consulta.ConsultaRequest;
 import br.com.fiap.sprint.dto.consulta.ConsultaResponse;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class ConsultaMapper {
+import java.time.LocalDateTime;
 
-    public static Consulta toDomain(ConsultaRequest request) {
+public final class ConsultaMapper {
+
+    private ConsultaMapper() {}
+
+    public static Consulta toDomain(ConsultaRequest req) {
+        if (req == null) return null;
         Consulta c = new Consulta();
-        c.setDataConsulta(request.getDataConsulta());
-        c.setStatus(request.getStatus());
-        c.setIdPaciente(request.getIdPaciente());
-        c.setIdMedico(request.getIdMedico());
+
+        LocalDateTime dt = req.getDataHora();
+        c.setDataHora(dt);
+        c.setModalidade(req.getModalidade());
         return c;
     }
 
-    public static ConsultaResponse toResponse(Consulta consulta) {
-        ConsultaResponse r = new ConsultaResponse();
-        r.setId(consulta.getId());
-        r.setDataConsulta(consulta.getDataConsulta());
-        r.setStatus(consulta.getStatus());
-        r.setIdPaciente(consulta.getIdPaciente());
-        r.setIdMedico(consulta.getIdMedico());
-        return r;
-    }
-
-    public static List<ConsultaResponse> toResponseList(List<Consulta> consultas) {
-        return consultas.stream()
-                .map(ConsultaMapper::toResponse)
-                .collect(Collectors.toList());
+    public static ConsultaResponse toResponse(Consulta c) {
+        if (c == null) return null;
+        ConsultaResponse resp = new ConsultaResponse();
+        resp.setId(c.getId());
+        resp.setDataHora(c.getDataHora());
+        resp.setModalidade(c.getModalidade());
+        return resp;
     }
 }

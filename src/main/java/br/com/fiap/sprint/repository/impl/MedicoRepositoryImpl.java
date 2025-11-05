@@ -18,15 +18,13 @@ public class MedicoRepositoryImpl implements MedicoRepository {
 
     @Override
     public Medico salvar(Medico m) {
-        String sql = "INSERT INTO MEDICO (NOME, CRM, ESPECIALIDADE, TELEFONE, EMAIL) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO T_HC_MEDICO (ID_MEDICO, NM_MEDICO, NR_CRM) " +
+                "VALUES (SQ_T_HC_MEDICO.NEXTVAL, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, m.getNome());
             stmt.setString(2, m.getCrm());
-            stmt.setString(3, m.getEspecialidade());
-            stmt.setString(4, m.getTelefone());
-            stmt.setString(5, m.getEmail());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -37,7 +35,7 @@ public class MedicoRepositoryImpl implements MedicoRepository {
     @Override
     public List<Medico> listarTodos() {
         List<Medico> medicos = new ArrayList<>();
-        String sql = "SELECT * FROM MEDICO";
+        String sql = "SELECT ID_MEDICO, NM_MEDICO, NR_CRM FROM T_HC_MEDICO ORDER BY ID_MEDICO";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -45,11 +43,8 @@ public class MedicoRepositoryImpl implements MedicoRepository {
             while (rs.next()) {
                 Medico m = new Medico();
                 m.setId(rs.getLong("ID_MEDICO"));
-                m.setNome(rs.getString("NOME"));
-                m.setCrm(rs.getString("CRM"));
-                m.setEspecialidade(rs.getString("ESPECIALIDADE"));
-                m.setTelefone(rs.getString("TELEFONE"));
-                m.setEmail(rs.getString("EMAIL"));
+                m.setNome(rs.getString("NM_MEDICO").trim());
+                m.setCrm(rs.getString("NR_CRM").trim());
                 medicos.add(m);
             }
         } catch (SQLException e) {
@@ -60,21 +55,19 @@ public class MedicoRepositoryImpl implements MedicoRepository {
 
     @Override
     public Medico buscarPorId(Long id) {
-        String sql = "SELECT * FROM MEDICO WHERE ID_MEDICO = ?";
+        String sql = "SELECT ID_MEDICO, NM_MEDICO, NR_CRM FROM T_HC_MEDICO WHERE ID_MEDICO = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                Medico m = new Medico();
-                m.setId(rs.getLong("ID_MEDICO"));
-                m.setNome(rs.getString("NOME"));
-                m.setCrm(rs.getString("CRM"));
-                m.setEspecialidade(rs.getString("ESPECIALIDADE"));
-                m.setTelefone(rs.getString("TELEFONE"));
-                m.setEmail(rs.getString("EMAIL"));
-                return m;
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Medico m = new Medico();
+                    m.setId(rs.getLong("ID_MEDICO"));
+                    m.setNome(rs.getString("NM_MEDICO").trim());
+                    m.setCrm(rs.getString("NR_CRM").trim());
+                    return m;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,21 +77,19 @@ public class MedicoRepositoryImpl implements MedicoRepository {
 
     @Override
     public Medico buscarPorCrm(String crm) {
-        String sql = "SELECT * FROM MEDICO WHERE CRM = ?";
+        String sql = "SELECT ID_MEDICO, NM_MEDICO, NR_CRM FROM T_HC_MEDICO WHERE TRIM(NR_CRM) = TRIM(?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, crm);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                Medico m = new Medico();
-                m.setId(rs.getLong("ID_MEDICO"));
-                m.setNome(rs.getString("NOME"));
-                m.setCrm(rs.getString("CRM"));
-                m.setEspecialidade(rs.getString("ESPECIALIDADE"));
-                m.setTelefone(rs.getString("TELEFONE"));
-                m.setEmail(rs.getString("EMAIL"));
-                return m;
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Medico m = new Medico();
+                    m.setId(rs.getLong("ID_MEDICO"));
+                    m.setNome(rs.getString("NM_MEDICO").trim());
+                    m.setCrm(rs.getString("NR_CRM").trim());
+                    return m;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,15 +99,13 @@ public class MedicoRepositoryImpl implements MedicoRepository {
 
     @Override
     public Medico atualizar(Medico m) {
-        String sql = "UPDATE MEDICO SET NOME = ?, ESPECIALIDADE = ?, TELEFONE = ?, EMAIL = ? WHERE ID_MEDICO = ?";
+        String sql = "UPDATE T_HC_MEDICO SET NM_MEDICO = ?, NR_CRM = ? WHERE ID_MEDICO = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, m.getNome());
-            stmt.setString(2, m.getEspecialidade());
-            stmt.setString(3, m.getTelefone());
-            stmt.setString(4, m.getEmail());
-            stmt.setLong(5, m.getId());
+            stmt.setString(2, m.getCrm());
+            stmt.setLong(3, m.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,9 +115,10 @@ public class MedicoRepositoryImpl implements MedicoRepository {
 
     @Override
     public void remover(Long id) {
-        String sql = "DELETE FROM MEDICO WHERE ID_MEDICO = ?";
+        String sql = "DELETE FROM T_HC_MEDICO WHERE ID_MEDICO = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {

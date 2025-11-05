@@ -1,10 +1,15 @@
 package br.com.fiap.sprint.service.consulta;
 
 import br.com.fiap.sprint.domain.Consulta;
+import br.com.fiap.sprint.dto.consulta.ConsultaRequest;
+import br.com.fiap.sprint.dto.consulta.ConsultaResponse;
+import br.com.fiap.sprint.mapper.ConsultaMapper;
 import br.com.fiap.sprint.repository.ConsultaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ConsultaService {
@@ -12,37 +17,40 @@ public class ConsultaService {
     @Inject
     ConsultaRepository repository;
 
-    public List<Consulta> listarTodos() {
-        return repository.listarTodos();
+    public List<ConsultaResponse> listarTodos() {
+        return repository.listarTodos()
+                .stream()
+                .map(ConsultaMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
-    public Consulta buscarPorId(Long id) {
-        return repository.buscarPorId(id);
+    public ConsultaResponse buscarPorId(Long id) {
+        Consulta consulta = repository.buscarPorId(id);
+        return consulta != null ? ConsultaMapper.toResponse(consulta) : null;
     }
 
-    public Consulta criar(Consulta consulta) {
-        if (consulta.getIdPaciente() == null || consulta.getIdMedico() == null) {
-            throw new RuntimeException("IDs de paciente e médico são obrigatórios!");
-        }
-
-        return repository.salvar(consulta);
+    public ConsultaResponse salvar(ConsultaRequest request) {
+        Consulta consulta = ConsultaMapper.toDomain(request);
+        Consulta salva = repository.salvar(consulta);
+        return ConsultaMapper.toResponse(salva);
     }
 
-    public Consulta atualizar(Long id, Consulta novaConsulta) {
+    public ConsultaResponse atualizar(Long id, ConsultaRequest request) {
         Consulta existente = repository.buscarPorId(id);
-        if (existente == null) {
-            throw new RuntimeException("Consulta não encontrada para atualização!");
-        }
+        if (existente == null) return null;
 
-        existente.setDataConsulta(novaConsulta.getDataConsulta());
-        existente.setStatus(novaConsulta.getStatus());
-        existente.setIdPaciente(novaConsulta.getIdPaciente());
-        existente.setIdMedico(novaConsulta.getIdMedico());
+        Consulta atualizada = ConsultaMapper.toDomain(request);
+        atualizada.setId(id);
 
-        return repository.atualizar(existente);
+        Consulta salva = repository.atualizar(atualizada);
+        return ConsultaMapper.toResponse(salva);
     }
 
-    public void remover(Long id) {
+    public boolean remover(Long id) {
+        Consulta existente = repository.buscarPorId(id);
+        if (existente == null) return false;
+
         repository.remover(id);
+        return true;
     }
 }

@@ -4,61 +4,38 @@ import br.com.fiap.sprint.domain.Paciente;
 import br.com.fiap.sprint.dto.paciente.PacienteRequest;
 import br.com.fiap.sprint.dto.paciente.PacienteResponse;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 public final class PacienteMapper {
 
-    public PacienteMapper() {
-    }
+    private PacienteMapper() {}
 
     public static Paciente toDomain(PacienteRequest req) {
-        if (req == null) {
-            return null;
-        }
-
+        if (req == null) return null;
         Paciente p = new Paciente();
         p.setNome(req.getNome());
-        p.setEmail(req.getEmail());
         p.setCpf(req.getCpf());
-        p.setTelefone(req.getTelefone());
-        p.setDataNascimento(req.getDataNascimento());
+        p.setRg(req.getRg());
+        p.setAltura(req.getAltura());
+        p.setPeso(req.getPeso());
+        p.setDataNascimento(req.getDataNascimento()); // LocalDate no request
+        p.setEscolaridade(req.getEscolaridade());
+        p.setEstadoCivil(req.getEstadoCivil());
+        p.setDescricao(req.getDescricao());
         return p;
     }
 
-    public static PacienteResponse toResponse(Paciente domain) {
-        if (domain == null) {
-            return null;
-        }
-
-        return new PacienteResponse(
-                domain.getId(),
-                domain.getNome(),
-                domain.getEmail(),
-                domain.getCpf(),
-                domain.getTelefone(),
-                domain.getDataNascimento()
-        );
-    }
-
-    public static List<PacienteResponse> toResponseList(List<Paciente> lista) {
-        if (lista == null) {
-            return List.of();
-        }
-
-        return lista.stream().filter(Objects::nonNull).map(PacienteMapper::toResponse).collect(Collectors.toList());
-    }
-
-    public static void apply(Paciente existente, PacienteRequest req) {
-        if (existente == null || req == null) {
-            return;
-        }
-
-        if (req.getNome() != null) existente.setNome(req.getNome());
-        if (req.getEmail() != null) existente.setEmail(req.getEmail());
-        if (req.getCpf() != null) existente.setCpf(req.getCpf());
-        if (req.getTelefone() != null) existente.setTelefone(req.getTelefone());
-        if (req.getDataNascimento() != null) existente.setDataNascimento(req.getDataNascimento());
+    public static PacienteResponse toResponse(Paciente p) {
+        if (p == null) return null;
+        PacienteResponse resp = new PacienteResponse();
+        resp.setId(p.getId());
+        resp.setNome(p.getNome());
+        resp.setCpf(p.getCpf());
+        resp.setRg(p.getRg());
+        resp.setAltura(p.getAltura());
+        resp.setPeso(p.getPeso());
+        resp.setDataNascimento(p.getDataNascimento()); // LocalDate
+        resp.setEscolaridade(p.getEscolaridade());
+        resp.setEstadoCivil(p.getEstadoCivil());
+        resp.setDescricao(p.getDescricao());
+        return resp;
     }
 }
