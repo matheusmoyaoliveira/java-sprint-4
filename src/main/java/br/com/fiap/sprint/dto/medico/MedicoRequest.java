@@ -9,7 +9,10 @@ public class MedicoRequest {
     private String nome;
 
     @NotBlank(message = "O CRM é obrigatório.")
-    @Pattern(regexp = "^\\d{5}-[A-Z]{2}$", message = "O CRM deve seguir o formato 12345-SP.")
+    @Pattern(
+            regexp = "^CRM-\\d{5}$",
+            message = "O CRM deve seguir o formato CRM-12345 (três letras, hífen e cinco números)."
+    )
     private String crm;
 
 
