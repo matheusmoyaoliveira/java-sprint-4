@@ -1,9 +1,7 @@
 package br.com.fiap.sprint.resource.medico;
 
-import br.com.fiap.sprint.domain.Medico;
 import br.com.fiap.sprint.dto.medico.MedicoRequest;
 import br.com.fiap.sprint.dto.medico.MedicoResponse;
-import br.com.fiap.sprint.mapper.MedicoMapper;
 import br.com.fiap.sprint.service.medico.MedicoService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -21,38 +19,52 @@ public class MedicoResource {
     MedicoService service;
 
     @GET
-    public List<MedicoResponse> listarTodos() {
-        return MedicoMapper.toResponseList(service.listarTodos());
+    public Response listarTodos() {
+        List<MedicoResponse> medicos = service.listarTodos();
+        return Response.ok(medicos).build();
     }
 
     @GET
     @Path("/{id}")
     public Response buscarPorId(@PathParam("id") Long id) {
-        Medico medico = service.buscarPorId(id);
-        return Response.ok(MedicoMapper.toResponse(medico)).build();
+        MedicoResponse medico = service.buscarPorId(id);
+        if (medico == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Médico não encontrado.")
+                    .build();
+        }
+        return Response.ok(medico).build();
     }
 
     @POST
     public Response criar(@Valid MedicoRequest request) {
-        Medico novo = MedicoMapper.toDomain(request);
-        Medico salvo = service.criar(novo);
+        MedicoResponse novo = service.salvar(request);
         return Response.status(Response.Status.CREATED)
-                .entity(MedicoMapper.toResponse(salvo))
+                .entity(novo)
                 .build();
     }
 
     @PUT
     @Path("/{id}")
     public Response atualizar(@PathParam("id") Long id, @Valid MedicoRequest request) {
-        Medico atualizado = MedicoMapper.toDomain(request);
-        Medico salvo = service.atualizar(id, atualizado);
-        return Response.ok(MedicoMapper.toResponse(salvo)).build();
+        MedicoResponse atualizado = service.atualizar(id, request);
+        if (atualizado == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Médico não encontrado para atualização.")
+                    .build();
+        }
+        return Response.ok(atualizado).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response remover(@PathParam("id") Long id) {
-        service.remover(id);
+        boolean removido = service.remover(id);
+        if (!removido) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Médico não encontrado para remoção.")
+                    .build();
+        }
         return Response.noContent().build();
     }
 }

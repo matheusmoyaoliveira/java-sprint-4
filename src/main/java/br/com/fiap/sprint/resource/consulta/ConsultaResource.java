@@ -1,9 +1,7 @@
 package br.com.fiap.sprint.resource.consulta;
 
-import br.com.fiap.sprint.domain.Consulta;
 import br.com.fiap.sprint.dto.consulta.ConsultaRequest;
 import br.com.fiap.sprint.dto.consulta.ConsultaResponse;
-import br.com.fiap.sprint.mapper.ConsultaMapper;
 import br.com.fiap.sprint.service.consulta.ConsultaService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -21,38 +19,52 @@ public class ConsultaResource {
     ConsultaService service;
 
     @GET
-    public List<ConsultaResponse> listarTodas() {
-        return ConsultaMapper.toResponseList(service.listarTodos());
+    public Response listarTodas() {
+        List<ConsultaResponse> consultas = service.listarTodos();
+        return Response.ok(consultas).build();
     }
 
     @GET
     @Path("/{id}")
     public Response buscarPorId(@PathParam("id") Long id) {
-        Consulta consulta = service.buscarPorId(id);
-        return Response.ok(ConsultaMapper.toResponse(consulta)).build();
+        ConsultaResponse consulta = service.buscarPorId(id);
+        if (consulta == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Consulta não encontrada.")
+                    .build();
+        }
+        return Response.ok(consulta).build();
     }
 
     @POST
     public Response criar(@Valid ConsultaRequest request) {
-        Consulta nova = ConsultaMapper.toDomain(request);
-        Consulta salva = service.criar(nova);
+        ConsultaResponse nova = service.salvar(request);
         return Response.status(Response.Status.CREATED)
-                .entity(ConsultaMapper.toResponse(salva))
+                .entity(nova)
                 .build();
     }
 
     @PUT
     @Path("/{id}")
     public Response atualizar(@PathParam("id") Long id, @Valid ConsultaRequest request) {
-        Consulta atualizada = ConsultaMapper.toDomain(request);
-        Consulta salva = service.atualizar(id, atualizada);
-        return Response.ok(ConsultaMapper.toResponse(salva)).build();
+        ConsultaResponse atualizada = service.atualizar(id, request);
+        if (atualizada == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Consulta não encontrada para atualização.")
+                    .build();
+        }
+        return Response.ok(atualizada).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response remover(@PathParam("id") Long id) {
-        service.remover(id);
+        boolean removido = service.remover(id);
+        if (!removido) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Consulta não encontrada para remoção.")
+                    .build();
+        }
         return Response.noContent().build();
     }
 }
