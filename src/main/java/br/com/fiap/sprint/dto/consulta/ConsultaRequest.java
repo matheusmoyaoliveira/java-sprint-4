@@ -15,7 +15,6 @@ public class ConsultaRequest {
     @Size(max = 20, message = "A modalidade deve ter no máximo {max} caracteres.")
     private String modalidade;
 
-
     public LocalDateTime getDataHora() { return dataHora; }
     public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
 
